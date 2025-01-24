@@ -1,5 +1,6 @@
 import re
 from fastapi import  APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator 
 from sqlmodel import Field, select
 from sql.engine import SessionDep
@@ -24,14 +25,14 @@ class AddClient(BaseModel):
             raise ValueError("Invalid telephone format")
         return value
 
-@client_router.post('/addclient')
-async def add_client(client_data: AddClient, session: SessionDep):
+
+async def add_client_helper(client_data: AddClient, session: SessionDep):
 
     client_telephone = session.exec(select(Client).where(Client.telephone == client_data.telephone)).first()
     if client_telephone:
         raise HTTPException(400, f'telephone exists')
     
-    client_req = session.exec(select(Client).where(Client.docRequisites== client_data.docRequisites)).first()
+    client_req = session.exec(select(Client).where(Client.docRequisites == client_data.docRequisites)).first()
     if client_req:
         raise HTTPException(400, 'docRequisites exists')
     
@@ -41,3 +42,11 @@ async def add_client(client_data: AddClient, session: SessionDep):
     session.refresh(new_client)
     return new_client
 
+@client_router.post('/addclient')
+async def add_client(client_data: AddClient, session: SessionDep):
+
+    new_client = await add_client_helper(client_data, session)
+    new_client = new_client.model_dump()
+    new_client['createdAt'] = new_client['createdAt'].isoformat()
+
+    return JSONResponse({'result': True, 'new_client': new_client}) 
