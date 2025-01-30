@@ -1,8 +1,6 @@
 from envparse import Env
 
-
 env = Env()
-
 
 DATABASE_URL = env.str(
     'DATABASE_URL',

@@ -1,12 +1,17 @@
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
+import pytest_asyncio
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import SQLModel, Session, create_engine
 from main import app
 from sql.engine import get_session
 import pytest
 from tests.test_engine import setup_db, db_session, test_client
+from core.models import Client
 
+pytest_plugins = ('pytest_asyncio',)
 
-from sql.models import Client
     
 test_data ={
     "name": "lololoshka",
@@ -22,45 +27,57 @@ test_data ={
     }
 
 
-@pytest.fixture
-def existing_client(db_session: Session):
+@pytest_asyncio.fixture
+async def existing_client(db_session: AsyncSession):
     data = test_data.copy()
     data['telephone'] = '12345000'
     data['docRequisites'] = '12345000'
     
-    new_client = Client(**data
-    )
+    new_client = Client(**data)
     
     db_session.add(new_client)
-    db_session.commit()
+    await db_session.commit()
+    await db_session.refresh(new_client)
 
     return new_client
         
 
-# def test_performance(db_session: Session):
-#     for i in range()
-def test_create_client_success(test_client):
+@pytest.mark.asyncio
+async def test_create_client_success(test_client: AsyncClient):
     data = test_data.copy()
-    response = test_client.post(
-        '/addclient',
+    response = await test_client.post(
+        '/api/v1/client/add',
         json=data
     )
     assert response.status_code == 200 
     
-def test_telephone_exists(existing_client: Client, test_client: TestClient):
+@pytest.mark.asyncio
+async def invalid_name_test(existing_client: Client, test_client: AsyncClient, db_session: AsyncSession):
     data = test_data.copy()
-    data['telephone'] = existing_client.telephone
-    response = test_client.post('/addclient',json=data.copy())
-    assert response.status_code == 400
-    assert response.json()['detail'] == 'telephone exists'
-
-def test_docrecs_exists(existing_client: Client, test_client: TestClient):
-    data = test_data.copy()
-    data['docRequisites'] = existing_client.docRequisites
-    response = test_client.post('/addclient',json=data.copy())
+    data['name'] = '111'
+    
+    response = await test_client.post('/api/v1/client/add',json=data)
     assert response.status_code == 400
     assert response.json()['detail'] == 'docRequisites exists'
     
+@pytest.mark.asyncio
+async def test_docrecs_exists(existing_client: Client, test_client: AsyncClient, db_session: AsyncSession):
+    data = test_data.copy()
+    data['docRequisites'] = existing_client.docRequisites
+    
+    response = await test_client.post('/api/v1/client/add',json=data)
+    assert response.status_code == 400
+    assert response.json()['detail'] == 'docRequisites exists'
+
+@pytest.mark.asyncio
+async def test_telephone_exists(existing_client: Client, test_client: AsyncClient, db_session: AsyncSession):
+    data = test_data.copy()
+    data['telephone'] = existing_client.telephone
+    response = await test_client.post('/api/v1/client/add',json=data.copy())
+    assert response.status_code == 400
+    assert response.json()['detail'] == 'telephone exists'
+
+
 
 
 

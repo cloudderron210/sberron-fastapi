@@ -1,33 +1,51 @@
-from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, Session, create_engine
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from core.models.base import Base
 from main import app
-from sql.engine import get_session
-import pytest
+from core.models import db_helper
+import pytest_asyncio
 
-DATABASE_URL = 'sqlite:///./test.db'
-engine = create_engine(DATABASE_URL, connect_args={'check_same_thread': False})
 
-@pytest.fixture(scope='session')
-def setup_db():
-    SQLModel.metadata.create_all(engine)
-    yield
-    SQLModel.metadata.drop_all(engine)
 
-@pytest.fixture(scope='function')
-def db_session(setup_db):
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = Session(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
+DATABASE_URL = 'sqlite+aiosqlite:///./test.db'
 
-@pytest.fixture
-def test_client(db_session):
-    def override_get_db():
-        yield db_session
-    app.dependency_overrides[get_session] = override_get_db
-    yield TestClient(app)
+
+@pytest_asyncio.fixture(scope='function')
+async def setup_db():
+    async_engine = create_async_engine(DATABASE_URL, connect_args={'check_same_thread': False}) 
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield  async_engine
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+    await async_engine.dispose()
+
+
+@pytest_asyncio.fixture(scope='function')
+async def db_session(setup_db):
+    async_session = AsyncSession(bind=setup_db) 
+    try:
+        yield async_session
+    finally:
+        await async_session.rollback()
+        await async_session.close()
+    
+    
+@pytest_asyncio.fixture(scope='function')
+async def test_client(db_session):
+    async def override_get_db():
+        async with db_session as session:
+            yield session
+    app.dependency_overrides[db_helper.session_dependency] = override_get_db 
+    async with AsyncClient(transport=ASGITransport(app=app), base_url='http://test') as client: 
+        yield client
     app.dependency_overrides.clear()
+
+        
+
+
+    
+        
+
+
 

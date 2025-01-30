@@ -1,6 +1,6 @@
 from fastapi import  HTTPException
 from sqlmodel import select
-from account.schemas import AddAccount
+from api_v1.account.schemas import AddAccount
 from sql.engine import SessionDep
 from sql.models import Client, Currency, Account
 

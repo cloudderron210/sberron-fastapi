@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel import select
-from account import crud
-from account.schemas import AddAccount
+from api_v1.account import crud
+from api_v1.account.schemas import AddAccount
 from sql.engine import SessionDep
 from sql.models import Account, Client, Currency
 
