@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 
-class AddAccount(BaseModel):
+class BaseAccount(BaseModel):
     owner_id: int = Field(...)
     currency_id: int = Field(...)
     balNum: str = Field(..., max_length=5, min_length=5)
@@ -15,3 +15,11 @@ class AddAccount(BaseModel):
         if not value.isdigit():
             raise ValueError('must contain only digits')
         return value
+
+class AddAccount(BaseAccount):
+    pass
+
+
+# class Account(Base)
+
+

@@ -10,13 +10,13 @@ from sql.models import Account, Client, Currency
 router = APIRouter(prefix="/account")
 
 
-@router.get("/get")
+@router.get("/get", response_model=list)
 async def get_accounts(session: SessionDep):
     result = await crud.get(session)
     return JSONResponse({"accs": result})
 
 
-@router.get("/get/{account_id}/")
+@router.get("/get/{account_id}/", )
 async def get_accounts_by_id(account_id: int, session: SessionDep):
     result = await crud.get_by_id(account_id, session)
     return JSONResponse({"accs": result})

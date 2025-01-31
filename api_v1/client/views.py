@@ -1,7 +1,4 @@
-from typing import Annotated
 from fastapi import  APIRouter, Depends, HTTPException
-from fastapi.responses import JSONResponse
-from sql.engine import SessionDep
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api_v1.client.schemas import AddClient, Client, PatchClient, UpdateClient
@@ -14,25 +11,25 @@ from core.models.helper import AsyncSessionDep
 router = APIRouter(tags=['Client'])
 
 
-@router.get('/get', response_model=list[Client])
+@router.get('', response_model=list[Client])
 async def get_client(session: AsyncSessionDep):
     clients = await crud.get_client(session)
     return clients
 
 
-@router.post('/add', response_model=Client)
+@router.post('', response_model=Client)
 async def add_client(client_data: AddClient, session: AsyncSessionDep):
     return await crud.add_client(client_data, session)
 
     
-@router.get('/get/{client_id}', response_model=Client)
+@router.get('/{client_id}', response_model=Client)
 async def get_client_by_id(client: ClientDepId):
     return client
         
         
 
 
-@router.put('/put/{client_id}')
+@router.put('/{client_id}')
 async def put_client(client_update: UpdateClient,
                      client: ClientDepId,
                      session: AsyncSession = Depends(db_helper.session_dependency)):
@@ -41,7 +38,7 @@ async def put_client(client_update: UpdateClient,
         client=client, 
         client_update=client_update)
 
-@router.patch('/patch/{client_id}')
+@router.patch('/{client_id}')
 async def patch_client(client_patch: PatchClient, client: ClientDepId, session: AsyncSessionDep):
     return await crud.patch_client(
         session=session, 
