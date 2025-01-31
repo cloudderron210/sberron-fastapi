@@ -2,6 +2,7 @@ __all__ = (
     'Base',
     'Client',
     'Account',
+    'Currency',
     'db_helper', 
     'DataBaseHelper'
 
