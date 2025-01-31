@@ -6,7 +6,7 @@ from .base import Base
 
 
 class Client(Base):
-    __tablename__ = 'client'
+    __tablename__ = 'clients'
     
     telephone: Mapped[str]
     name: Mapped[str] 

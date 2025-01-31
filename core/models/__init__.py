@@ -11,6 +11,7 @@ __all__ = (
 from .base import Base
 from .client import Client
 from .account import Account
+from .currency import Currency
 from .helper import db_helper, DataBaseHelper
 
 
