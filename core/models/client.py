@@ -1,9 +1,12 @@
 
 from datetime import datetime, date
+from typing import TYPE_CHECKING
 from sqlalchemy import TIMESTAMP, DateTime, func, Column, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
+if TYPE_CHECKING:
+    from .account import Account
 
 class Client(Base):
     __tablename__ = 'clients'
@@ -20,5 +23,6 @@ class Client(Base):
     docRequisites: Mapped[str] 
     docIssuedBy: Mapped[str] 
 
+    accounts: Mapped[list['Account']] = relationship(back_populates='client')
 
-    
+
