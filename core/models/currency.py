@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.models.base import Base
 
 if TYPE_CHECKING:
@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 class Currency(Base):
     __tablename__ = 'currencies'
     
+    id: Mapped[int] = mapped_column(autoincrement=False ,primary_key=True) 
     str_code: Mapped[str]
     name: Mapped[str]
 

@@ -25,14 +25,11 @@ async def add_client(client_data: AddClient, session: AsyncSessionDep):
 @router.get('/{client_id}', response_model=Client)
 async def get_client_by_id(client: ClientDepId):
     return client
-        
-        
-
 
 @router.put('/{client_id}')
 async def put_client(client_update: UpdateClient,
                      client: ClientDepId,
-                     session: AsyncSession = Depends(db_helper.session_dependency)):
+                     session: AsyncSessionDep):
     return await crud.update_client(
         session=session, 
         client=client, 

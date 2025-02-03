@@ -15,13 +15,13 @@ class Client(Base):
     name: Mapped[str] 
     surname: Mapped[str] 
     patronymic: Mapped[str | None ]
-    createdAt: Mapped[datetime | None] = mapped_column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
-    serviceEndDate: Mapped[datetime | None ]
+    created_at: Mapped[datetime | None] = mapped_column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
+    service_end_date: Mapped[datetime | None ]
     birthday: Mapped[date] 
     sex: Mapped[str] 
     document: Mapped[str] 
-    docRequisites: Mapped[str] 
-    docIssuedBy: Mapped[str] 
+    doc_requisites: Mapped[str] 
+    doc_issued_by: Mapped[str] 
 
     accounts: Mapped[list['Account']] = relationship(back_populates='client')
 

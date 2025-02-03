@@ -15,11 +15,11 @@ class Account(Base):
     
     client_id: Mapped[int] = mapped_column(ForeignKey('clients.id'))
     currency_id: Mapped[int] = mapped_column(ForeignKey('currencies.id'))
-    numAccount: Mapped[str] = mapped_column(String(50))
-    dateOpen: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
-    dateClosed: Mapped[datetime | None ]
+    num_account: Mapped[str] = mapped_column(String(50))
+    date_open: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
+    date_closed: Mapped[datetime | None ]
     description: Mapped[str] = mapped_column(String(100))
-    isActive: Mapped[bool] 
+    is_active: Mapped[bool] 
     status: Mapped[bool] = mapped_column(default=True)  
 
     client: Mapped['Client'] = relationship(back_populates='accounts')

@@ -4,6 +4,7 @@ import re
 from typing import TypeVar
 from pydantic import BaseModel, ConfigDict, field_validator, Field
 
+from pydantic.alias_generators import to_snake
 
 class Sex(str, Enum):
     MALE = 'male'
@@ -38,19 +39,22 @@ class ValidatorMixin():
 
 
 class BaseClient(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     
     name: str | None = Field(None, max_length=100)
     telephone: str | None = Field(None, max_length=50)
     surname: str | None = Field(None, max_length=30)
-    birthday: date | None
-    sex: Sex | None 
-    document: Document | None 
-    patronymic: str | None 
+    birthday: date | None = Field(None)
+    sex: Sex | None = Field(None)
+    document: Document | None = Field(None)
+    patronymic: str | None = Field(None) 
     docRequisites: str | None = Field(None)
     docIssuedBy: str | None = Field(None)
     
-class PatchClient(BaseClient):
+    class Config:
+        alias_generator = to_snake
+        populate_by_name = True
+    
+class PatchClient(BaseClient, ValidatorMixin):
     pass
 
 class AddClient(BaseModel, ValidatorMixin):
@@ -63,6 +67,10 @@ class AddClient(BaseModel, ValidatorMixin):
     patronymic: str | None 
     docRequisites: str = Field(..., max_length=100)
     docIssuedBy: str = Field(..., max_length=100)
+    
+    class Config:
+        alias_generator = to_snake 
+        populate_by_name = True
 
 class UpdateClient(BaseClient):
     pass
