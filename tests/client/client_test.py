@@ -101,17 +101,12 @@ async def test_invalid_birthday_formats_patch(existing_client: Client,test_clien
     validate_birthday(response, expected_error_type, expected_msg)
 
 
-    
-    
-
 def validate_birthday(response, expected_error_type, expected_msg):
     
     error = response.json()["detail"][0]
     assert error["loc"] == ["body", "birthday"]
     assert expected_error_type == error["type"] 
     assert expected_msg in error["msg"]   
-    
-
     
     
 @pytest.mark.asyncio
