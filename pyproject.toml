@@ -6,7 +6,6 @@ authors = [
     {name = "Your Name",email = "you@example.com"}
 ]
 readme = "README.md"
-package-mode = false
 requires-python = ">=3.12"
 dependencies = [
     "alembic (>=1.14.1,<2.0.0)",
@@ -130,3 +129,5 @@ pytest = "^8.3.4"
 ruff = "^0.9.4"
 mypy = "^1.14.1"
 
+[tool.poetry]
+package-mode = false
