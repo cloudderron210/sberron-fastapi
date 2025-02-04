@@ -35,3 +35,14 @@ class PatchAccount():
 # class Account(Base)
 
 
+class Account(BaseModel):
+    id: int
+    clientId: int 
+    currencyId: int 
+    description: str 
+    isActive: bool 
+    num_account: str
+    class Config:
+        alias_generator = to_snake
+        populate_by_name = True
+    

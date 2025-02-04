@@ -2,7 +2,7 @@ from fastapi import  HTTPException
 from sqlalchemy import Result
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
-from api_v1.account.schemas import AddAccount
+from api_v1.account.schemas import AddAccount, BaseAccount
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 
@@ -31,7 +31,7 @@ async def get_by_id(account_id: int, session: AsyncSession):
     return await session.get(Account, account_id)
     
 
-async def add(account_data: AddAccount, session: AsyncSession):
+async def add(account_data: BaseAccount, session: AsyncSession):
     data = account_data.model_dump(by_alias=True)
     
     
