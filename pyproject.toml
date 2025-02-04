@@ -1,5 +1,5 @@
 [project]
-name = "sber-fastapi"
+name = "sberron-fastapi"
 version = "0.1.0"
 description = ""
 authors = [
