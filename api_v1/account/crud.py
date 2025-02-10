@@ -8,7 +8,7 @@ from sqlalchemy.engine import Result
 
 from core.helpers import CustomValidationError
 from core.models.account import Account
-from core.models.client import Client
+from core.models.user import User 
 from core.models.currency import Currency
     
 
@@ -20,10 +20,10 @@ async def get_accounts(session: AsyncSession) -> list[Account]:
 
 
 async def get_owner_by_id(account_id, session: AsyncSession):
-    result = await session.execute(select(Account).options(selectinload(Account.client)).where(Account.id == account_id))
+    result = await session.execute(select(Account).options(selectinload(Account.user)).where(Account.id == account_id))
     account = result.scalar()
     if account:
-        owner = account.client
+        owner = account.user
         return owner
     else:
         raise HTTPException(404, detail="Account not found")
@@ -34,16 +34,16 @@ async def get_by_id(account_id: int, session: AsyncSession) -> Account|None:
 
 async def add(account_data: AddAccount, session: AsyncSession) -> Account:
     
-    result: Result = await session.execute(select(Client).where(Client.id == account_data.clientId))
-    existing_client = result.first()
+    result: Result = await session.execute(select(User).where(User.id == account_data.userId))
+    existing_user = result.first()
     
-    if not existing_client:
+    if not existing_user:
         raise CustomValidationError(
             status_code=400,
-            detail='there are no Client with such id',
-            type='client_not_found',
-            loc=['body', 'clientId'],
-            input=str(account_data.clientId)
+            detail='there are no User with such id',
+            type='user_not_found',
+            loc=['body', 'userId'],
+            input=str(account_data.userId)
         )
         
     result: Result = await session.execute(select(Currency).where(Currency.id == account_data.currencyId))
@@ -54,7 +54,7 @@ async def add(account_data: AddAccount, session: AsyncSession) -> Account:
             status_code=400,
             detail='there are no currency with such id',
             type='currency_not_found',
-            loc=['body', 'clientId'],
+            loc=['body', 'userId'],
             input=str(account_data.currencyId)
         )
 

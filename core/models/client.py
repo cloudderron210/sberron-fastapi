@@ -1,28 +1,22 @@
-
-from datetime import datetime, date
+from datetime import datetime
 from typing import TYPE_CHECKING
-from sqlalchemy import TIMESTAMP,  text
+from sqlalchemy import TIMESTAMP, ForeignKey, String, sql,  text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
-if TYPE_CHECKING:
-    from .account import Account
 
-class Client(Base):
-    __tablename__ = 'clients'
+
+
+class User(Base):
+    __tablename__ = 'users'
+
+    state: Mapped[bool] = mapped_column(server_default=sql.expression.true())
+    login: Mapped[str] = mapped_column(String(20))
+    password: Mapped[str] 
+    salt: Mapped[str]
+    date_register: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
+    time_last_login: Mapped[datetime | None]
+    last_login_ip: Mapped[str]
     
-    telephone: Mapped[str]
-    name: Mapped[str] 
-    surname: Mapped[str] 
-    patronymic: Mapped[str | None ]
-    created_at: Mapped[datetime | None] = mapped_column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
-    service_end_date: Mapped[datetime | None ]
-    birthday: Mapped[date] 
-    sex: Mapped[str] 
-    document: Mapped[str] 
-    doc_requisites: Mapped[str] 
-    doc_issued_by: Mapped[str] 
-
-    accounts: Mapped[list['Account']] = relationship(back_populates='client')
-
-
+    
+    

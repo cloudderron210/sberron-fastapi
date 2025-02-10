@@ -12,7 +12,7 @@ class ValidatorMixin:
     
 
 class BaseAccount(BaseModel):
-    clientId: int | None = Field(None)
+    userId: int | None = Field(None)
     currencyId: int | None = Field(None)
     balNum: str | None = Field(None, max_length=5, min_length=5)
     description: str | None = Field(None)
@@ -24,7 +24,7 @@ class BaseAccount(BaseModel):
     )
 
 class AddAccount(BaseModel, ValidatorMixin):
-    clientId: int = Field(...)
+    userId: int = Field(...)
     currencyId: int = Field(...)
     balNum: str = Field(..., max_length=5, min_length=5)
     description: str  = Field(...)
@@ -44,7 +44,7 @@ class PatchAccount(BaseAccount, ValidatorMixin):
 class AccountResponse(BaseModel):
     id: int
     num_account: str
-    client_id: int 
+    user_id: int 
     currency_id: int 
     description: str  
     is_active: bool
