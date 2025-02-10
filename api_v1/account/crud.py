@@ -1,6 +1,6 @@
 from fastapi import  HTTPException
 from sqlalchemy import Result
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from api_v1.account.schemas import AddAccount, BaseAccount
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +20,7 @@ async def get_accounts(session: AsyncSession) -> list[Account]:
 
 
 async def get_owner_by_id(account_id, session: AsyncSession):
-    result = await session.execute(select(Account).options(joinedload(Account.client)).where(Account.id == account_id))
+    result = await session.execute(select(Account).options(selectinload(Account.client)).where(Account.id == account_id))
     account = result.scalar()
     if account:
         owner = account.client

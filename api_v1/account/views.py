@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from api_v1.account import crud
-from api_v1.account.schemas import  AccountResponse, AddAccount, BaseAccount
+from api_v1.account.schemas import  AccountResponse, AddAccount 
 from api_v1.account.dependencies import AccountById
 
 from api_v1.client.schemas import Client

@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel import select
 from core.models import Client
 
@@ -57,7 +57,7 @@ async def add_client(client_data: AddClient, session: AsyncSession) -> Client:
 
 
 async def get_accounts(client_id: int, session: AsyncSession):
-    stmt = select(Client).options(selectinload(Client.accounts)).where(Client.id == client_id)
+    stmt = select(Client).options(joinedload(Client.accounts)).where(Client.id == client_id)
     result: Result = await session.execute(stmt)
     client = result.scalar()
     if client:
