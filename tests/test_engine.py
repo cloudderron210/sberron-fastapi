@@ -20,15 +20,6 @@ async def setup_db():
         await conn.run_sync(Base.metadata.drop_all)
     await async_engine.dispose()
 
-
-# @pytest_asyncio.fixture(scope='function')
-# async def db_session(setup_db):
-#     async_session = AsyncSession(bind=setup_db) 
-#     try:
-#         yield async_session
-#     finally:
-#         await async_session.rollback()
-#         await async_session.close()
     
 @pytest_asyncio.fixture(scope='function')
 async def db_session(setup_db):

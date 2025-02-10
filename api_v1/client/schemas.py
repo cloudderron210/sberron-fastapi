@@ -50,9 +50,11 @@ class BaseClient(BaseModel):
     docRequisites: str | None = Field(None)
     docIssuedBy: str | None = Field(None)
     
-    class Config:
-        alias_generator = to_snake
-        populate_by_name = True
+    model_config = ConfigDict(
+        alias_generator=to_snake,
+        populate_by_name=True
+    )
+    
     
 class PatchClient(BaseClient, ValidatorMixin):
     pass
@@ -68,9 +70,11 @@ class AddClient(BaseModel, ValidatorMixin):
     docRequisites: str = Field(..., max_length=100)
     docIssuedBy: str = Field(..., max_length=100)
     
-    class Config:
-        alias_generator = to_snake 
-        populate_by_name = True
+    model_config = ConfigDict(
+        alias_generator=to_snake,
+        populate_by_name=True
+    )
+    
 
 class UpdateClient(BaseClient):
     pass

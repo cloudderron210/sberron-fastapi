@@ -1,11 +1,10 @@
 from typing import Any
 from httpx import AsyncClient
 import pytest
+from core.models.account import Account
 from core.models.client import Client
 from core.models.currency import Currency
-from tests.account.fixtures import TEST_ACCOUNT_DATA, existing_currency
-from tests.test_engine import setup_db, db_session, test_client
-from tests.client.fixtures import existing_client
+from tests.account.fixtures import TEST_ACCOUNT_DATA 
 from tests.helpers import validate_invalid_parameter
 import logging
 
@@ -14,10 +13,24 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
 ACCOUNT_URL = '/api/v1/account'
 
 @pytest.mark.asyncio
-async def test_get_accounts(test_client: AsyncClient):
+async def test_get_accounts_success(test_client: AsyncClient):
     response = await test_client.get(ACCOUNT_URL)
     assert response.status_code == 200
     assert type(response.json()) == list
+    
+@pytest.mark.asyncio
+async def test_get_accounts_by_id_success(existing_account: Account, test_client: AsyncClient):
+    account_id = existing_account.id
+    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}")
+    assert response.status_code == 200
+    assert response.json()
+    
+@pytest.mark.asyncio
+async def test_get_accounts_fail(test_client: AsyncClient):
+    account_id = 999
+    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}")
+    assert response.status_code == 404
+    assert response.json()['detail'] == f'Client with id {account_id} not found'
 
 
 @pytest.mark.asyncio
@@ -29,7 +42,7 @@ async def test_add_account(
     data["currencyId"] = existing_currency.id
     response = await test_client.post(ACCOUNT_URL, json=data)
     assert response.status_code == 200
-    assert response.json()["client_id"] == existing_client.id
+    assert response.json()["clientId"] == existing_client.id
 
 
 @pytest.mark.asyncio
@@ -43,11 +56,12 @@ async def test_no_such_currency(
         data = data,
         parameter_name="currencyId",
         parameter_value='811',
-        expected_error_message="no such currency",
+        expected_error_message="there are no currency with such id",
         test_client=test_client,
         url=ACCOUNT_URL,
         method='post',
-        expected_error_code=400
+        expected_error_code=400,
+        expected_error_type='currency_not_found'
     )
 
 

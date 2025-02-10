@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, field_validator
-from pydantic.alias_generators import to_snake
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic.alias_generators import to_camel, to_snake
 
 
 class ValidatorMixin:
@@ -12,37 +12,47 @@ class ValidatorMixin:
     
 
 class BaseAccount(BaseModel):
+    clientId: int | None = Field(None)
+    currencyId: int | None = Field(None)
+    balNum: str | None = Field(None, max_length=5, min_length=5)
+    description: str | None = Field(None)
+    isActive: bool | None = Field(None)
+
+    model_config = ConfigDict(
+        alias_generator=to_snake,
+        populate_by_name=True
+    )
+
+class AddAccount(BaseModel, ValidatorMixin):
     clientId: int = Field(...)
     currencyId: int = Field(...)
     balNum: str = Field(..., max_length=5, min_length=5)
-    description: str = Field(...)
+    description: str  = Field(...)
     isActive: bool = Field(...)
     
-    class Config:
-        alias_generator = to_snake
-        populate_by_name = True
+    model_config = ConfigDict(
+        alias_generator=to_snake,
+        populate_by_name=True
+    )
 
-class AddAccount(BaseAccount):
+
+class PatchAccount(BaseAccount, ValidatorMixin):
     pass
 
-class PatchAccount():
-    clientId: int | None= Field(...)
-    currencyId: int | None= Field(...)
-    balNum: str | None= Field(..., max_length=5, min_length=5)
-    description: str | None= Field(...)
-    isActive: bool | None= Field(...)
 
-# class Account(Base)
-
-
-class Account(BaseModel):
-    id: int
-    clientId: int 
-    currencyId: int 
-    description: str 
-    isActive: bool 
-    num_account: str
-    class Config:
-        alias_generator = to_snake
-        populate_by_name = True
     
+class AccountResponse(BaseModel):
+    id: int
+    num_account: str
+    client_id: int 
+    currency_id: int 
+    description: str  
+    is_active: bool
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel)
+    
+
+    
+

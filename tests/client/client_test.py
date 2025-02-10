@@ -1,11 +1,9 @@
 from httpx import AsyncClient
 import pytest
-from tests.test_engine import setup_db, db_session, test_client
 from core.models import Client
-from tests.client.fixtures import TEST_DATA, existing_client, existing_client2 
+from tests.client.fixtures import TEST_DATA
 
 pytest_plugins = ('pytest_asyncio',)
-
    
 
 @pytest.mark.asyncio

@@ -4,8 +4,11 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from sqlmodel import func, select
+from core.models.account import Account
 from sql.engine import SessionDep
-from sql.models import Account, Client, Currency, MoveMoneyOrder as Mvo
+from sql.models import Client, Currency 
+from core.models.money_move_order import MoneyMoveOrder as Mvo
+
 
 
 
@@ -23,11 +26,11 @@ class Balance(BaseModel):
 
     
 def check_balance(account: Account, session: SessionDep) -> dict:
-    if account.isActive:
+    if account.is_active:
         executed_debits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccCr == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == True
                 )
             ).one()
@@ -35,7 +38,7 @@ def check_balance(account: Account, session: SessionDep) -> dict:
         executed_credits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccDb == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == True
                 )
             ).one()
@@ -43,7 +46,7 @@ def check_balance(account: Account, session: SessionDep) -> dict:
         pending_credits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccDb == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == False 
                 )
             ).one()
@@ -55,7 +58,7 @@ def check_balance(account: Account, session: SessionDep) -> dict:
         executed_debits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccDb == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == True
                 )
             ).one()
@@ -63,7 +66,7 @@ def check_balance(account: Account, session: SessionDep) -> dict:
         executed_credits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccCr == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == True
                 )
             ).one()
@@ -72,7 +75,7 @@ def check_balance(account: Account, session: SessionDep) -> dict:
         pending_credits = (
             session.exec(
                 select(func.sum(Mvo.amount)).where(
-                    Mvo.idAccCr == account.id,
+                    Mvo.id_acc_cr== account.id,
                     Mvo.is_executed == False 
                 )
             ).one()
@@ -97,22 +100,22 @@ def balance(balance_data:Balance, session: SessionDep):
 
 @money_router.post('/moveMoney')
 def move_money(move_money_data: MoveMoney, session: SessionDep):
-    acc_db = session.exec(select(Account).where(Account.numAccount == move_money_data.strAccDb)).first()
-    acc_cr = session.exec(select(Account).where(Account.numAccount == move_money_data.strAccCr)).first()
+    acc_db = session.exec(select(Account).where(Account.num_account== move_money_data.strAccDb)).first()
+    acc_cr = session.exec(select(Account).where(Account.num_account== move_money_data.strAccCr)).first()
 
     if not acc_db:
         raise HTTPException(400, "no such acc_db")
     if not acc_cr:
-        raise HTTPException(400, f"no such acc_cr {acc_db.numAccount}")
+        raise HTTPException(400, f"no such acc_cr {acc_db.num_account}")
 
     if acc_db.currency_id!= acc_cr.currency_id:
         raise HTTPException(400, 'currencys should be the same')
 
-    if acc_db.isActive:
+    if acc_db.num_account:
         acc_db_available = check_balance(acc_db, session)['available']
         if int(acc_db_available) < move_money_data.amount:
             raise HTTPException(400, 'insufficient amount on accDb')
-    if not acc_cr.isActive:
+    if not acc_cr.num_account:
         acc_cr_available = check_balance(acc_cr, session)['available']
         if int(acc_cr_available) < move_money_data.amount:
             raise HTTPException(400, 'balance cannot be lower than 0')
@@ -121,6 +124,8 @@ def move_money(move_money_data: MoveMoney, session: SessionDep):
     data = move_money_data.model_dump()
     data['idAccCr'] = acc_cr.id
     data['idAccDb'] = acc_db.id
+    data.pop('strAccCr')
+    data.pop('strAccDb')
     data['is_executed'] = move_money_data.execute
 
 

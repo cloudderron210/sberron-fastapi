@@ -3,7 +3,6 @@ from httpx import AsyncClient
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
 
 async def validate_invalid_parameter(
     data: dict,
@@ -14,8 +13,8 @@ async def validate_invalid_parameter(
     url: str,
     expected_error_message: str,
     expected_error_code: int,
+    expected_error_type: str,
     path_parameter: Any = None,
-    expected_error_type: str | None = None,
     
 ):
     method_map = {
@@ -27,19 +26,11 @@ async def validate_invalid_parameter(
     data[parameter_name] = parameter_value
     response = await method_map[method](url, json=data)
     
-    logging.debug(f"Request {method.upper()} {url} with {data}")
-    logging.debug(f"Response: {response.status_code} - {response.json()}")
-
+    logging.error(f"Request {method.upper()} {url} with {data}\n expected_error_code: {expected_error_code} - expected_error_type: {expected_error_type} - expected_error_message: {expected_error_message} - ")
+    logging.error(f"Response: {response.status_code} - {response.json()}")
     
-    if expected_error_type == None:
-        error = response.json()["detail"]
-        assert response.status_code == expected_error_code
-        assert error == expected_error_message
-        
-    
-    else:
-        error = response.json()["detail"][0]
-        assert response.status_code == expected_error_code 
-        assert error["type"] == expected_error_type
-        assert error["msg"] == expected_error_message
+    error = response.json()["detail"][0]
+    assert response.status_code == expected_error_code 
+    assert error["type"] == expected_error_type
+    assert error["msg"] == expected_error_message
     

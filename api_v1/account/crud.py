@@ -6,6 +6,7 @@ from api_v1.account.schemas import AddAccount, BaseAccount
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 
+from core.helpers import CustomValidationError
 from core.models.account import Account
 from core.models.client import Client
 from core.models.currency import Currency
@@ -27,25 +28,35 @@ async def get_owner_by_id(account_id, session: AsyncSession):
     else:
         raise HTTPException(404, detail="Account not found")
 
-async def get_by_id(account_id: int, session: AsyncSession):
+async def get_by_id(account_id: int, session: AsyncSession) -> Account|None:
     return await session.get(Account, account_id)
     
 
-async def add(account_data: BaseAccount, session: AsyncSession):
-    data = account_data.model_dump(by_alias=True)
-    
+async def add(account_data: AddAccount, session: AsyncSession) -> Account:
     
     result: Result = await session.execute(select(Client).where(Client.id == account_data.clientId))
-    id_cl = result.first()
+    existing_client = result.first()
     
-    if not id_cl:
-        raise HTTPException(400, 'there are no Client with such id')
+    if not existing_client:
+        raise CustomValidationError(
+            status_code=400,
+            detail='there are no Client with such id',
+            type='client_not_found',
+            loc=['body', 'clientId'],
+            input=str(account_data.clientId)
+        )
         
     result: Result = await session.execute(select(Currency).where(Currency.id == account_data.currencyId))
     currency = result.first()
     
     if not currency:
-        raise HTTPException(400, 'no such currency')
+        raise CustomValidationError(
+            status_code=400,
+            detail='there are no currency with such id',
+            type='currency_not_found',
+            loc=['body', 'clientId'],
+            input=str(account_data.currencyId)
+        )
 
     async def generate_licnum():
         result: Result = await session.execute(select(Account))
@@ -65,6 +76,7 @@ async def add(account_data: BaseAccount, session: AsyncSession):
         C = (sum(x * y for x, y in zip(KOEFFICIENT, pred))) % 10 * 3 % 10
         return C 
 
+    data = account_data.model_dump(by_alias=True)
     licnum = await generate_licnum()
     data['num_account'] = account_data.balNum + str(account_data.currencyId)+ str(sum_c(account_data.balNum, licnum, str(account_data.currencyId))) + '4444' + licnum
     data.pop('bal_num')
@@ -73,4 +85,7 @@ async def add(account_data: BaseAccount, session: AsyncSession):
     session.add(new_account)
     await session.commit()
     await session.refresh(new_account)
+    
     return new_account
+
+
