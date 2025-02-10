@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING 
 from sqlalchemy import ForeignKey, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .money_move_order import MoneyMoveOrder
 
 from .base import Base
 
@@ -24,3 +25,8 @@ class Account(Base):
 
     client: Mapped['Client'] = relationship(back_populates='accounts')
     currency: Mapped['Currency'] = relationship(back_populates='accounts')
+    
+    # credit_orders: Mapped['MoneyMoveOrder'] = relationship("MoneyMoveOrder", foreign_keys=[MoneyMoveOrder.id_acc_cr],back_populates='credit_account')
+    # debet_orders: Mapped['MoneyMoveOrder'] = relationship("MoneyMoveOrder", foreign_keys=[MoneyMoveOrder.id_acc_db],back_populates='debet_account')
+    
+    
