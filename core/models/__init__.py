@@ -5,9 +5,9 @@ __all__ = (
     'Currency',
     'db_helper', 
     'DataBaseHelper',
-    'MoneyMoveOrder'
-
-
+    'MoneyMoveOrder',
+    'User',
+    'UserClient'
 )
 
 from .base import Base
@@ -17,5 +17,6 @@ from .currency import Currency
 from .helper import db_helper, DataBaseHelper
 from .money_move_order import MoneyMoveOrder
 from .user import User
+from .user_client import UserClient
 
 
