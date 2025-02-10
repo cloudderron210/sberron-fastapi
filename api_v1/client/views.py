@@ -1,6 +1,7 @@
 from fastapi import  APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api_v1.account.schemas import AccountResponse
 from api_v1.client.schemas import AddClient, Client, PatchClient, UpdateClient
 from api_v1.client import crud
 from api_v1.client.dependencies import ClientDepId, get_client_dep
@@ -21,6 +22,11 @@ async def get_client(session: AsyncSessionDep):
 async def add_client(client_data: AddClient, session: AsyncSessionDep):
     return await crud.add_client(client_data, session)
 
+
+@router.get('/{client_id}/accounts', response_model=list[AccountResponse])
+async def get_accounts_by_client_id(client_id: int, session: AsyncSessionDep):
+    result = await  crud.get_accounts(client_id, session)
+    return result
     
 @router.get('/{client_id}', response_model=Client)
 async def get_client_by_id(client: ClientDepId):
