@@ -5,8 +5,6 @@ from tests.account.fixtures import (
     existing_account_2,
     existing_account_passive_2,
 )
-
-
-from tests.test_engine import setup_db, db_session, test_client
-from tests.client.fixtures import existing_client, existing_client2
 from tests.funds.fixtures import exs_hundred_rub_passive_to_active
+from tests.test_engine import setup_db, db_session, test_client
+from tests.user.fixtures import existing_user, existing_user2

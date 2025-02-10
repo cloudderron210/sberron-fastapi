@@ -11,7 +11,7 @@ async def get_account_dep(account_id: Annotated[int, Path],
     if account is not None:
         return account 
     else:
-        raise HTTPException(404, f'Client with id {account_id} not found')
+        raise HTTPException(404, f'User with id {account_id} not found')
 
 AccountById = Annotated[Account, Depends(get_account_dep)]
         

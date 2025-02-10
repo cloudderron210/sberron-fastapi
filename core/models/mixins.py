@@ -3,17 +3,17 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .client import Client
+    from .user import User 
 
-class ClientRelationMixin(declared_attr):
-    _client_back_populates: str | None = None
+class UserRelationMixin(declared_attr):
+    _user_back_populates: str | None = None
 
 
     @declared_attr
-    def client_id(cls) -> Mapped[int]:
-        return mapped_column(ForeignKey('clients.id'))
+    def user_id(cls) -> Mapped[int]:
+        return mapped_column(ForeignKey('users.id'))
 
     
     @declared_attr
-    def client(cls) -> Mapped['Client']:
-        return relationship('Client', back_populates=cls._client_back_populates)
+    def user(cls) -> Mapped['User']:
+        return relationship('User', back_populates=cls._user_back_populates)

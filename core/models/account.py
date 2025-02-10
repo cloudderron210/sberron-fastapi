@@ -4,18 +4,17 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.models.mixins import ClientRelationMixin
+from core.models.mixins import UserRelationMixin
 from .money_move_order import MoneyMoveOrder
 
 from .base import Base
 
 if TYPE_CHECKING:
-    from .client import Client
     from .currency import Currency
 
-class Account(Base, ClientRelationMixin):
+class Account(Base, UserRelationMixin):
     __tablename__ = 'accounts'
-    _client_back_populates = 'accounts'
+    _user_back_populates = 'accounts'
     
     currency_id: Mapped[int] = mapped_column(ForeignKey('currencies.id'))
     num_account: Mapped[str] = mapped_column(String(50))

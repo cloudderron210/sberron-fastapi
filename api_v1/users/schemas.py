@@ -38,7 +38,7 @@ class ValidatorMixin():
 
 
 
-class BaseClient(BaseModel):
+class BaseUser(BaseModel):
     
     name: str | None = Field(None, max_length=100)
     telephone: str | None = Field(None, max_length=50)
@@ -56,10 +56,10 @@ class BaseClient(BaseModel):
     )
     
     
-class PatchClient(BaseClient, ValidatorMixin):
+class PatchUser(BaseUser, ValidatorMixin):
     pass
 
-class AddClient(BaseModel, ValidatorMixin):
+class AddUser(BaseModel, ValidatorMixin):
     name: str = Field(..., max_length=100)
     telephone: str = Field(..., max_length=50)
     surname: str = Field(..., max_length=30)
@@ -76,10 +76,10 @@ class AddClient(BaseModel, ValidatorMixin):
     )
     
 
-class UpdateClient(BaseClient):
+class UpdateUser(BaseUser):
     pass
 
-class Client(BaseClient):
+class User(BaseUser):
     id:int
 
 

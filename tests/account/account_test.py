@@ -2,7 +2,7 @@ from typing import Any
 from httpx import AsyncClient
 import pytest
 from core.models.account import Account
-from core.models.client import Client
+from core.models.user import User
 from core.models.currency import Currency
 from tests.account.fixtures import TEST_ACCOUNT_DATA 
 from tests.helpers import validate_invalid_parameter
@@ -30,28 +30,28 @@ async def test_get_accounts_fail(test_client: AsyncClient):
     account_id = 999
     response = await test_client.get(f"{ACCOUNT_URL}/{account_id}")
     assert response.status_code == 404
-    assert response.json()['detail'] == f'Client with id {account_id} not found'
+    assert response.json()['detail'] == f'User with id {account_id} not found'
 
 
 @pytest.mark.asyncio
 async def test_add_account(
-    existing_currency: Currency, existing_client: Client, test_client: AsyncClient
+    existing_currency: Currency, existing_user: User, test_client: AsyncClient
 ):
     data = TEST_ACCOUNT_DATA.copy()
-    data["clientId"] = existing_client.id
+    data["userId"] = existing_user.id
     data["currencyId"] = existing_currency.id
     response = await test_client.post(ACCOUNT_URL, json=data)
     assert response.status_code == 200
-    assert response.json()["clientId"] == existing_client.id
+    assert response.json()["userId"] == existing_user.id
 
 
 @pytest.mark.asyncio
 async def test_no_such_currency(
-    existing_currency: Currency, existing_client: Client, test_client: AsyncClient
+    existing_currency: Currency, existing_user: User, test_client: AsyncClient
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = "811"
-    data["clientId"] = existing_client.id
+    data["userId"] = existing_user.id
     await validate_invalid_parameter(
         data = data,
         parameter_name="currencyId",
@@ -76,7 +76,7 @@ async def test_no_such_currency(
 )
 async def test_invalid_balnum(
     existing_currency: Currency,
-    existing_client: Client,
+    existing_user: User,
     test_client: AsyncClient,
     expected_error_type: str,
     error_message: str,
@@ -84,7 +84,7 @@ async def test_invalid_balnum(
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = existing_currency.id
-    data["clientId"] = existing_client.id
+    data["userId"] = existing_user.id
 
     await validate_invalid_parameter(
         data=data,
@@ -110,7 +110,7 @@ async def test_invalid_balnum(
 )
 async def test_invalid_is_active(
     existing_currency: Currency, 
-    existing_client: Client, test_client: AsyncClient,
+    existing_user: User, test_client: AsyncClient,
     expected_error_type: str,
     error_message: str,
     isActiveValue: Any,
@@ -118,7 +118,7 @@ async def test_invalid_is_active(
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = existing_currency.id
-    data["clientId"] = existing_client.id
+    data["userId"] = existing_user.id
 
     await validate_invalid_parameter(
         data=data,

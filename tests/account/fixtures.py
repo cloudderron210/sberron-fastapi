@@ -7,7 +7,7 @@ from api_v1.account.schemas import AddAccount, BaseAccount
 
 
 TEST_ACCOUNT_DATA = {
-    "clientId": 1,
+    "userId": 1,
     "currencyId": 810,
     "balNum": "12345",
     "description": "set",
