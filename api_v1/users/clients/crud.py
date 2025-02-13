@@ -1,15 +1,17 @@
+from datetime import datetime, timedelta
 import hashlib
 import secrets
-from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
-from sqlmodel import select
-from api_v1.users.clients.schemas import AddClient
+from api_v1.users.clients.schemas import AddClient, LoginClient
 from api_v1.users.crud import add_user
+from core.helpers import CustomValidationError
 from core.models import User, Client
 from api_v1.users.schemas import AddUser, PatchUser, UpdateUser
 from core.models.user_client import UserClient
+import jwt
+from core.config import settings
 
 
 def get_hash(paswd: str) -> dict:
@@ -44,6 +46,26 @@ async def register_client(client_data: AddClient, session: AsyncSession):
     except Exception as e:
         await session.rollback()
         raise e
+
+
+async def login_client(client: Client, session: AsyncSession):
+
+    stmt = select(UserClient).where(UserClient.client_id == client.id)
+    user_client = await session.scalar(stmt)
+    if user_client:
+        current_datetime = datetime.now() + timedelta(seconds=20)
+        formatted_timestamp = current_datetime.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        payload = {
+            'idClient':user_client.client_id,
+            'idUser': user_client.user_id,
+            'permissions': 0,
+            'timeExpire': formatted_timestamp
+        }
+        token = jwt.encode(payload, key=settings.jwt_secret_key, algorithm=settings.jwt_algorith)
+
+        return token
+
+    
     
     
     

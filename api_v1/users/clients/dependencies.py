@@ -1,21 +1,42 @@
+import hashlib
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path
-from sqlalchemy.ext.asyncio import AsyncSession
-from core.models.user import User
-from api_v1.users import crud
-from core.models import db_helper
+from sqlalchemy import select
+from api_v1.users.clients.schemas import LoginClient
+from core.models.client import Client
+from core.models.helper import AsyncSessionDep
+from core.helpers import CustomValidationError
 
 
-async def get_user_dep(user_id: Annotated[int, Path],
-                         session: AsyncSession = Depends(db_helper.session_dependency)) -> User:
-    user = await crud.get_user_by_id(user_id=user_id, session=session) 
-    if user is not None:
-        return user
-    else:
-        raise HTTPException(404, f'User with id {user_id} not found')
+async def get_client_dep(login_data: LoginClient,
+                         session: AsyncSessionDep) -> Client:
 
+    stmt = select(Client).where(Client.login == login_data.login)
+    client = await session.scalar(stmt)
+    if not client:
+        raise CustomValidationError(
+            status_code=404,
+            detail="user with this login not found",
+            type="invalid credentials",
+            loc=["body", "login"],
+            input=login_data.login
+        )
+    
+    salt = bytes.fromhex(client.salt)
+    combined = login_data.password.encode() + salt
+    hash = hashlib.sha512(combined).hexdigest()
+    
+    if client.password != hash:
+        raise CustomValidationError(
+            status_code=404,
+            detail="invalid password",
+            type="invalid credentials",
+            loc=["body", "password"],
+            input=login_data.password
+        )
+    return client
 
-UserDepId = Annotated[User, Depends(get_user_dep)]
+ClientValidated = Annotated[Client, Depends(get_client_dep)]
         
         
         

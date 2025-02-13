@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api_v1.users.schemas import AddUser
 from core.models import User
 
-TEST_DATA ={
+USER_TEST_DATA ={
     "name": "lololoshka",
     "surname": "test2name",
     "birthday": "2024-09-16",
@@ -13,16 +13,21 @@ TEST_DATA ={
     "document": "passport",
     "docRequisites": "12345",
     "docIssuedBy": "1234",
-    "telephone": "+12345",
-    "patronymic": "666",
+    "telephone": "+12345", "patronymic": "666",
     "serviceEndDate": None
     }
+CLIENT_USER_TEST_DATA = {
+    "login": "testlogin",
+     "password": "testpassword",
+     **USER_TEST_DATA
+}
+
 
 
 @pytest_asyncio.fixture
 async def existing_user(db_session: AsyncSession):
     
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     user_data = AddUser(**data).model_dump(by_alias=True)
     
     user_data['telephone'] = '12345000'
@@ -39,7 +44,7 @@ async def existing_user(db_session: AsyncSession):
 @pytest_asyncio.fixture
 async def existing_user2(db_session: AsyncSession):
     
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     user_data = AddUser(**data).model_dump(by_alias=True)
     
     user_data['telephone'] = '12345001'
