@@ -54,7 +54,7 @@ async def validate_login(login_data: AddClient,
         )
     return login_data
 
-AddClientValidated = Annotated[AddClient, Depends(validate_login)]
+ClientDataValidated = Annotated[AddClient, Depends(validate_login)]
 
 
 

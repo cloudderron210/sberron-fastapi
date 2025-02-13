@@ -22,7 +22,6 @@ def get_hash(paswd: str) -> dict:
     salt = salt.hex()
     return {"hash": hash, "salt": salt}
 
-
 async def register_client(client_data: AddClient, session: AsyncSession):
 
     try:
@@ -52,6 +51,10 @@ async def register_client(client_data: AddClient, session: AsyncSession):
     except Exception:
         await session.rollback()
         raise
+    finally:
+        await session.close()
+
+    
 
 
 async def login_client(client: Client, session: AsyncSession):
@@ -71,4 +74,9 @@ async def login_client(client: Client, session: AsyncSession):
             payload, key=settings.jwt_secret_key, algorithm=settings.jwt_algorith
         )
 
-        return token
+        return {"jwt": token}
+
+
+
+
+

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator, Field
+from pydantic import BaseModel, ConfigDict, constr, field_validator, Field
 
 
 from api_v1.users.schemas import AddUser
@@ -8,6 +8,7 @@ from api_v1.users.schemas import AddUser
 class ClientCredentials():
     login: str = Field(max_length=20)
     password: str = Field(min_length=6, max_length=20)
+
 
     @field_validator('login')
     def validate_login(cls, value: str):
@@ -28,4 +29,5 @@ class AddClient(ClientCredentials,AddUser):
 class LoginClient(ClientCredentials, BaseModel):
     pass
 
-
+class JwtResponse(BaseModel):
+    jwt: str
