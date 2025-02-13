@@ -30,18 +30,20 @@ async def check_if_exists(session: AsyncSession,
  
 
 async def add_user(user_data: AddUser, session: AsyncSession) -> User:
-
     await check_if_exists(session=session, 
                           telephone=user_data.telephone,
                           docRequisites=user_data.docRequisites)
-
     new_user = User(**user_data.model_dump(by_alias=True))
     session.add(new_user)
+    return new_user
+
+async def register_user(user_data: AddUser, session: AsyncSession) -> User:
+    new_user = await add_user(user_data, session)
     await session.commit()
     await session.refresh(new_user)
     return new_user
-
-
+        
+    
 async def get_accounts(user_id: int, session: AsyncSession):
     stmt = select(User).options(joinedload(User.accounts)).where(User.id == user_id)
     result: Result = await session.execute(stmt)

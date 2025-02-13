@@ -1,6 +1,6 @@
 from fastapi import  APIRouter, Depends, HTTPException
 
-from api_v1.users.clients.dependencies import ClientValidated
+from api_v1.users.clients.dependencies import AddClientValidated, ClientValidated
 from api_v1.users.clients.schemas import AddClient, LoginClient
 from api_v1.users.clients import crud
 from core.models.helper import AsyncSessionDep
@@ -10,10 +10,8 @@ router = APIRouter(tags=['Client'])
 
 
 @router.post('/register', status_code=201)
-async def add_client(client_data: AddClient, session: AsyncSessionDep):
+async def add_client(client_data: AddClientValidated, session: AsyncSessionDep):
     return await crud.register_client(client_data,session)
-    
-
     
 
 @router.post('/login')

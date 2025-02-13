@@ -23,7 +23,7 @@ async def get_user(session: AsyncSessionDep):
 
 @router.post('', response_model=User)
 async def add_user(user_data: AddUser, session: AsyncSessionDep):
-    return await crud.add_user(user_data, session)
+    return await crud.register_user(user_data, session)
 
 
 @router.get('/{user_id}/accounts', response_model=list[AccountResponse])

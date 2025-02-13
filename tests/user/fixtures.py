@@ -18,7 +18,7 @@ USER_TEST_DATA ={
     }
 CLIENT_USER_TEST_DATA = {
     "login": "testlogin",
-     "password": "testpassword",
+     "password": "Testpassword",
      **USER_TEST_DATA
 }
 
