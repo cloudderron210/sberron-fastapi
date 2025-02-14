@@ -47,7 +47,7 @@ async def validate_login(login_data: AddClient,
     if client:
         raise CustomValidationError(
             status_code=404,
-            detail="this login is alread in use",
+            detail="this login is already in use",
             type="invalid credentials",
             loc=["body", "login"],
             input=login_data.login

@@ -2,8 +2,12 @@
 from datetime import date
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
+from api_v1.users.clients.crud import register_client
+from api_v1.users.clients.schemas import AddClient
 from api_v1.users.schemas import AddUser
 from core.models import User
+from core.models import Client
+
 
 USER_TEST_DATA ={
     "name": "lololoshka",
@@ -13,16 +17,41 @@ USER_TEST_DATA ={
     "document": "passport",
     "docRequisites": "12345",
     "docIssuedBy": "1234",
-    "telephone": "+12345", "patronymic": "666",
+    "telephone": "+12345", 
+    "patronymic": "666",
     "serviceEndDate": None
     }
 CLIENT_USER_TEST_DATA = {
     "login": "testlogin",
-     "password": "Testpassword",
+     "password": "Testpassword210",
      **USER_TEST_DATA
 }
+USER_URL = '/api/v1/user'
+CLIENT_URL = f'{USER_URL}/client'
 
 
+@pytest_asyncio.fixture
+async def existing_client(db_session: AsyncSession) -> Client:
+    data = CLIENT_USER_TEST_DATA.copy()
+    client_data = AddClient(**data)
+    new_client = await register_client(client_data, db_session)
+    return new_client
+    
+@pytest_asyncio.fixture
+async def existing_client_login(existing_client: Client) -> str:
+    return existing_client.login
+
+# @pytest_asyncio.fixture
+# async def existing_client(db_session: AsyncSession):
+#     data = CLIENT_USER_TEST_DATA.copy()
+#     client_data = AddClient(**data).model_dump(include={'login', 'password'}, by_alias=True)
+#     new_client = Client(**client_data)
+#     
+#     db_session.add(new_client)
+#     await db_session.commit()
+#     await db_session.refresh(new_client)
+#     return new_client
+    
 
 @pytest_asyncio.fixture
 async def existing_user(db_session: AsyncSession):

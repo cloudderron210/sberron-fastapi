@@ -22,7 +22,7 @@ def get_hash(paswd: str) -> dict:
     salt = salt.hex()
     return {"hash": hash, "salt": salt}
 
-async def register_client(client_data: AddClient, session: AsyncSession):
+async def register_client(client_data: AddClient, session: AsyncSession) -> Client:
 
     try:
         user_data = AddUser(
@@ -46,7 +46,7 @@ async def register_client(client_data: AddClient, session: AsyncSession):
 
         await session.commit()
 
-        return {"message": "Client created successfully"}
+        return new_client
 
     except Exception:
         await session.rollback()

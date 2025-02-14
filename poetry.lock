@@ -2400,6 +2400,21 @@ docs = ["sphinx (>=5.3)", "sphinx-rtd-theme (>=1)"]
 testing = ["coverage (>=6.2)", "hypothesis (>=5.7.1)"]
 
 [[package]]
+name = "pytest-lazy-fixtures"
+version = "1.1.2"
+description = "Allows you to use fixtures in @pytest.mark.parametrize."
+optional = false
+python-versions = "<4.0,>=3.8"
+groups = ["main"]
+files = [
+    {file = "pytest_lazy_fixtures-1.1.2-py3-none-any.whl", hash = "sha256:e04c164d2caa5a6b9c846fa7559aad2ce0980a944daf4b75579f39920ae961e4"},
+    {file = "pytest_lazy_fixtures-1.1.2.tar.gz", hash = "sha256:14ba4154dab52066c1c4d6547cc40bbf60726445cb16f1d2dcc9485cdf38964d"},
+]
+
+[package.dependencies]
+pytest = ">=7"
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -3487,5 +3502,5 @@ requests = "*"
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.12"
-content-hash = "2e4542de5be59df648ce0c8141ab4f87d69688bf41a48d57c7dad6ee8751a797"
+python-versions = ">=3.12,<4.0"
+content-hash = "79dafbe9b43ceeb5d78c127cb0fcb81abfac79ff623476a7d2c678fc41a6bc54"
