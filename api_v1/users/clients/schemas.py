@@ -18,8 +18,8 @@ class ClientCredentials():
     
     @field_validator('password')
     def validate_password(cls, value: str):
-        if not any(c.isupper() for c in value):
-            raise ValueError('Invalid password')
+        if not any(c.isupper() for c in value) or not any(c.isdigit() for c in value):
+            raise ValueError('Invalid password, must contain at least 1 uppercase letter and 1 digit')
         return value
     
 
@@ -31,3 +31,6 @@ class LoginClient(ClientCredentials, BaseModel):
 
 class JwtResponse(BaseModel):
     jwt: str
+
+
+
