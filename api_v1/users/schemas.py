@@ -66,7 +66,7 @@ class AddUser(BaseModel, ValidatorMixin):
     birthday: date 
     sex: Sex 
     document: Document 
-    patronymic: str | None 
+    patronymic: str | None = Field(None, max_length=20) 
     docRequisites: str = Field(..., max_length=100)
     docIssuedBy: str = Field(..., max_length=100)
     

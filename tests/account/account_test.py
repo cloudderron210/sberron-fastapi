@@ -98,7 +98,6 @@ async def test_invalid_balnum(
         expected_error_code=422
     )
     
-    
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "expected_error_type, error_message, isActiveValue",

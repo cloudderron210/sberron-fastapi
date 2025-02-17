@@ -5,11 +5,14 @@ from api_v1.account.schemas import AccountResponse
 from api_v1.users.schemas import AddUser, User, PatchUser, UpdateUser
 from api_v1.users import crud
 from api_v1.users.dependencies import UserDepId, get_user_dep
+from api_v1.users.clients.views import router as client_router
 from core.models import db_helper
 from core.models.helper import AsyncSessionDep
 
 
 router = APIRouter(tags=['User'])
+router.include_router(client_router, prefix='/client')
+
 
 
 @router.get('', response_model=list[User])
@@ -20,7 +23,7 @@ async def get_user(session: AsyncSessionDep):
 
 @router.post('', response_model=User)
 async def add_user(user_data: AddUser, session: AsyncSessionDep):
-    return await crud.add_user(user_data, session)
+    return await crud.register_user(user_data, session)
 
 
 @router.get('/{user_id}/accounts', response_model=list[AccountResponse])

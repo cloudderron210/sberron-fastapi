@@ -1,14 +1,14 @@
 from httpx import AsyncClient
 import pytest
 from core.models import User
-from tests.user.fixtures import TEST_DATA
+from tests.user.fixtures import USER_TEST_DATA
 
 pytest_plugins = ('pytest_asyncio',)
    
 
 @pytest.mark.asyncio
 async def test_create_user_success(test_client: AsyncClient):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     response = await test_client.post(
         '/api/v1/user',
         json=data
@@ -26,7 +26,7 @@ async def test_get_users(existing_user: User, test_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_docrecs_exists_post(existing_user: User, test_client: AsyncClient):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     data['docRequisites'] = existing_user.doc_requisites
     
     response = await test_client.post('/api/v1/user',json=data)
@@ -44,7 +44,7 @@ async def test_docrecs_exists_patch(existing_user: User, existing_user2: User, t
     
 @pytest.mark.asyncio
 async def test_telephone_exists_post(existing_user: User, test_client: AsyncClient):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     data['telephone'] = existing_user.telephone
     
     response = await test_client.post('/api/v1/user',json=data)
@@ -62,7 +62,7 @@ async def test_telephone_exists_patch(existing_user: User, existing_user2: User,
 
 @pytest.mark.asyncio
 async def test_invalid_birthday_future(test_client: AsyncClient):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     data['birthday'] = '2025-10-10'
     response = await test_client.post('/api/v1/user',json=data)
     assert response.status_code == 422
@@ -80,7 +80,7 @@ async def test_invalid_birthday_future(test_client: AsyncClient):
     ("2024-10-1", "date_from_datetime_parsing", "Input should be a valid date or datetime, input is too short"),
 ])
 async def test_invalid_birthday_formats_post(test_client: AsyncClient, invalid_birthday, expected_error_type, expected_msg):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     data["birthday"] = invalid_birthday
     response = await test_client.post('/api/v1/user',json=data)
     validate_birthday(response, expected_error_type, expected_msg)
@@ -109,7 +109,7 @@ def validate_birthday(response, expected_error_type, expected_msg):
     
 @pytest.mark.asyncio
 async def test_invalid_document(test_client: AsyncClient):
-    data = TEST_DATA.copy()
+    data = USER_TEST_DATA.copy()
     data['document'] = 'wrong_document'
     response = await test_client.post('/api/v1/user',json=data)
 

@@ -1,13 +1,20 @@
 from os import getenv
 
-from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     apiv1_prefix: str = '/api/v1'
-    db_url: str = 'postgresql+asyncpg://derron:Cloudderron210!@194.120.116.89/debug2' 
+    db_url: str 
     db_echo: bool = True
-    
-    
+    jwt_secret_key: str
+    jwt_algorith: str = "HS256"
 
-settings = Settings()
+    model_config = SettingsConfigDict(
+        env_file = ".env"
+    )
+
+settings = Settings() 
+
+

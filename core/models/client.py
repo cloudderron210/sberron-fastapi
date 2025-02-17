@@ -7,8 +7,8 @@ from .base import Base
 
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Client(Base):
+    __tablename__ = 'clients'
 
     state: Mapped[bool] = mapped_column(server_default=sql.expression.true())
     login: Mapped[str] = mapped_column(String(20))
@@ -16,7 +16,7 @@ class User(Base):
     salt: Mapped[str]
     date_register: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
     time_last_login: Mapped[datetime | None]
-    last_login_ip: Mapped[str]
+    last_login_ip: Mapped[str | None]
     
     
     

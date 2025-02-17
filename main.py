@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse 
 from core.helpers import CustomValidationError
-import settings
 from api_v1 import router as router_v1
 from contextlib import asynccontextmanager
 from core.config import settings

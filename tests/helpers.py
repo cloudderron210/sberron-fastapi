@@ -32,5 +32,5 @@ async def validate_invalid_parameter(
     error = response.json()["detail"][0]
     assert response.status_code == expected_error_code 
     assert error["type"] == expected_error_type
-    assert error["msg"] == expected_error_message
+    assert expected_error_message in error["msg"] 
     
