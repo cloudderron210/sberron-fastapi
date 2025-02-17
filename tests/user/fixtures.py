@@ -41,16 +41,6 @@ async def existing_client(db_session: AsyncSession) -> Client:
 async def existing_client_login(existing_client: Client) -> str:
     return existing_client.login
 
-# @pytest_asyncio.fixture
-# async def existing_client(db_session: AsyncSession):
-#     data = CLIENT_USER_TEST_DATA.copy()
-#     client_data = AddClient(**data).model_dump(include={'login', 'password'}, by_alias=True)
-#     new_client = Client(**client_data)
-#     
-#     db_session.add(new_client)
-#     await db_session.commit()
-#     await db_session.refresh(new_client)
-#     return new_client
     
 
 @pytest_asyncio.fixture
