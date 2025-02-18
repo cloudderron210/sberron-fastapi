@@ -35,7 +35,9 @@ async def check_balance(account: Account, session: AsyncSession) -> dict:
     return {"current": current, "available": available}
 
 
-async def move_money(movement_data: MoveMoneyData, session: AsyncSession):
+async def move_money(user_validated: dict, movement_data: MoveMoneyData, session: AsyncSession):
+    
+    
     result = await session.execute(
         select(Account)
         .options(selectinload(Account.currency))
@@ -51,11 +53,22 @@ async def move_money(movement_data: MoveMoneyData, session: AsyncSession):
             input=f"{movement_data.strAccDb}",
         )
 
+    if user_validated['idUser'] != acc_db.user_id:
+        raise CustomValidationError(
+            status_code=404,
+            detail="not allowed to move money from this account",
+            type="not_allowed",
+            loc=["body", "strAccDb"],
+            input=f"{movement_data.strAccDb}",
+        )
+
+
     result = await session.execute(
         select(Account)
         .options(selectinload(Account.currency))
         .where(Account.num_account == movement_data.strAccCr)
     )
+    
     acc_cr = result.scalars().first()
     if not acc_cr:
         raise CustomValidationError(

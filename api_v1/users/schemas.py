@@ -76,6 +76,7 @@ class AddUser(BaseModel, ValidatorMixin):
     )
     
 class UserResponse(BaseModel):
+    id: int
     telephone:str
     name:str
     surname: str

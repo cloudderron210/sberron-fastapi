@@ -44,6 +44,7 @@ async def register_client(client_data: AddClient, session: AsyncSession) -> Clie
         new_user_client = UserClient(user_id=new_user.id, client_id=new_client.id)
         session.add(new_user_client)
 
+
         await session.commit()
 
         return new_client
@@ -58,12 +59,11 @@ async def register_client(client_data: AddClient, session: AsyncSession) -> Clie
 
 
 async def login_client(client: Client, session: AsyncSession):
-
     stmt = select(UserClient).where(UserClient.client_id == client.id)
     user_client = await session.scalar(stmt)
     if user_client:
-        current_datetime = datetime.now() + timedelta(seconds=20)
-        formatted_timestamp = current_datetime.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        current_datetime_plus_20 = datetime.now() + timedelta(minutes=20)
+        formatted_timestamp = current_datetime_plus_20.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         payload = {
             "idClient": user_client.client_id,
             "idUser": user_client.user_id,
@@ -73,7 +73,7 @@ async def login_client(client: Client, session: AsyncSession):
         token = jwt.encode(
             payload, key=settings.jwt_secret_key, algorithm=settings.jwt_algorith
         )
-
+        
         return {"jwt": token}
 
 
