@@ -2,7 +2,7 @@ from fastapi import  APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api_v1.account.schemas import AccountResponse
-from api_v1.users.schemas import AddUser, User, PatchUser, UpdateUser
+from api_v1.users.schemas import AddUser, User, PatchUser, UpdateUser, UserResponse
 from api_v1.users import crud
 from api_v1.users.dependencies import UserDepId, get_user_dep
 from api_v1.users.clients.views import router as client_router
@@ -15,7 +15,7 @@ router.include_router(client_router, prefix='/client')
 
 
 
-@router.get('', response_model=list[User])
+@router.get('', response_model=list[UserResponse])
 async def get_user(session: AsyncSessionDep):
     users = await crud.get_user(session)
     return users

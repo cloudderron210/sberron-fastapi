@@ -4,7 +4,7 @@ import re
 from typing import TypeVar
 from pydantic import BaseModel, ConfigDict, field_validator, Field
 
-from pydantic.alias_generators import to_snake
+from pydantic.alias_generators import to_camel, to_snake
 
 class Sex(str, Enum):
     MALE = 'male'
@@ -75,6 +75,19 @@ class AddUser(BaseModel, ValidatorMixin):
         populate_by_name=True
     )
     
+class UserResponse(BaseModel):
+    telephone:str
+    name:str
+    surname: str
+    created_at: datetime
+    document: str
+    doc_requisites: str
+    doc_issued_by: str
+    
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel
+    )
 
 class UpdateUser(BaseUser):
     pass
