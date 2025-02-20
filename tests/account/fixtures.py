@@ -62,7 +62,12 @@ async def existing_account_passive_2(existing_user: User, db_session: AsyncSessi
     
 @pytest_asyncio.fixture
 async def active_account_for_user1(existing_user: User, db_session: AsyncSession) -> Account:
-    new_account = await create_account(db_session, is_active=False, owner=existing_user)
+    new_account = await create_account(db_session, is_active=True, owner=existing_user)
+    return new_account
+
+@pytest_asyncio.fixture
+async def passive_account_for_user2(existing_currency: Currency, existing_user2: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=False, owner=existing_user2)
     return new_account
 
 

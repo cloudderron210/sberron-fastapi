@@ -51,6 +51,21 @@ async def auth_headers(test_jwt: str) -> dict:
     return headers
 
 @pytest_asyncio.fixture
+async def test_jwt_user2(existing_client: Client, db_session: AsyncSession) -> str | None:
+    result = await login_client(existing_client, db_session)
+    if result:
+        return result['jwt']
+    else:
+        return
+
+@pytest_asyncio.fixture
+async def auth_headers_user2(test_jwt: str) -> dict:
+    headers = {
+        'Authorization': f'Bearer {test_jwt}'
+    }
+    return headers
+
+@pytest_asyncio.fixture
 async def existing_client(db_session: AsyncSession) -> Client:
     data = CLIENT_USER_TEST_DATA.copy()
     data['telephone'] = '+796012300001'

@@ -1,15 +1,13 @@
 from httpx import AsyncClient
 import pytest
-from api_v1.funds.schemas import MoveMoneyData
+import logging
 from core.models.account import Account
 from core.models.client import Client
 from tests.helpers import validate_invalid_parameter
-from tests.test_engine import test_client
-from tests.account.fixtures import existing_account, existing_account_passive
 from core.models.money_move_order import MoneyMoveOrder
 from tests.funds.fixtures import FUNDS_URL, MOVE_MONEY_DATA_TEMPLATE
-import logging
 from tests.funds.helpers import move_money
+from pytest_lazy_fixtures import lf 
 
 
 pytest_plugins = ("pytest_asyncio",)
@@ -77,8 +75,6 @@ async def test_not_enough_funds(
         expected_error_type='invalid_amount',
         headers=auth_headers
     )
-    
-    
 
 
 @pytest.mark.asyncio
@@ -111,5 +107,26 @@ async def test_balance_cannot_be_lower_zero(
         headers=auth_headers
     )
 
+@pytest.mark.asyncio
+async def test_not_allowed(
+    passive_account_for_user2: Account,
+    active_account_for_user1: Account,
+    test_client: AsyncClient,
+    auth_headers: dict
+):
+    data = MOVE_MONEY_DATA_TEMPLATE.copy()
+    data['strAccCr'] = active_account_for_user1.num_account   
+
+    await validate_invalid_parameter(
+        data = data,
+        parameter_name="strAccDb",
+        parameter_value=passive_account_for_user2.num_account,
+        expected_error_message="not allowed to move money from this account",
+        test_client=test_client,
+        url=f'{FUNDS_URL}/move',
+        method='post',
+        expected_error_code=404,
+        expected_error_type='not_allowed',
+        headers=auth_headers
+    )
     
-        
