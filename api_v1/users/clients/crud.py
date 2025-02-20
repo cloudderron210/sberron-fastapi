@@ -4,6 +4,7 @@ import logging
 import secrets
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from api_v1.users.clients.schemas import AddClient
 from api_v1.users.crud import add_user
 from core.models import User, Client
@@ -75,6 +76,22 @@ async def login_client(client: Client, session: AsyncSession):
         )
         
         return {"jwt": token}
+
+
+async def get_user(id: int, session: AsyncSession):
+    stmt = (
+        select(User)
+        .options(joinedload(User.accounts))
+        .where(User.id == id)
+    )
+    user = await session.scalar(stmt)
+    if user:
+        return user.accounts
+    else:
+        return None
+
+    
+    
 
 
 

@@ -28,7 +28,7 @@ async def get_accounts_by_id(account: AccountById, authorised_user: AuthorisedUs
 async def get_owner(
     authorised_user: AuthorisedUser, account_id: int, session: AsyncSessionDep
 ):
-    if authorised_user["permissions"] == 1:
+    if authorised_user["permissions"] == 0:
         result = await crud.get_owner_by_id(account_id, session)
         return result
     else:
@@ -39,7 +39,7 @@ async def get_owner(
 async def add_account(
     authorised_user: AuthorisedUser, account_data: AddAccount, session: AsyncSessionDep
 ):
-    if authorised_user["permissions"] == 1:
+    if authorised_user["permissions"] == 0:
         new_account = await crud.add(account_data, session)
         return new_account
     else:

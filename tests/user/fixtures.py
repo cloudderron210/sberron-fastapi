@@ -29,6 +29,11 @@ CLIENT_USER_TEST_DATA = {
 USER_URL = '/api/v1/user'
 CLIENT_URL = f'{USER_URL}/client'
 
+# @pytest_asyncio.fixture
+# async def test_jwt(existing_client: Client) -> str:
+    
+    
+
 
 @pytest_asyncio.fixture
 async def existing_client(db_session: AsyncSession) -> Client:

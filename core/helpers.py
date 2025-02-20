@@ -1,6 +1,8 @@
+import logging
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 
+logger = logging.getLogger('uvicorn.error')
 
 class CustomValidationError(HTTPException):
     def __init__(self, status_code: int, detail: str, type: str, loc: list[str], input: str):

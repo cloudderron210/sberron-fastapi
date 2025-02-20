@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict, field_validator, Field
 
 from pydantic.alias_generators import to_camel, to_snake
 
+from api_v1.account.schemas import AccountResponse
+
 class Sex(str, Enum):
     MALE = 'male'
     FEMALE = 'female'
@@ -84,6 +86,7 @@ class UserResponse(BaseModel):
     document: str
     doc_requisites: str
     doc_issued_by: str
+    accounts: list[AccountResponse]
     
     model_config = ConfigDict(
         populate_by_name=True,

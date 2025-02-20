@@ -19,5 +19,9 @@ async def login_client(client: ClientValidated, session: AsyncSessionDep):
     return await crud.login_client(client, session)
 
 
+@router.get('/getuser/{id}')
+async def get_user(id: int, session: AsyncSessionDep):
+    return await crud.get_user(id, session)
+
 
 

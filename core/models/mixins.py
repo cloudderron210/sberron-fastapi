@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 class UserRelationMixin(declared_attr):
     _user_back_populates: str | None = None
 
-
     @declared_attr
     def user_id(cls) -> Mapped[int]:
         return mapped_column(ForeignKey('users.id'))
