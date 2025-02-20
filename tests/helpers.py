@@ -14,6 +14,7 @@ async def validate_invalid_parameter(
     expected_error_message: str,
     expected_error_code: int,
     expected_error_type: str,
+    headers: dict | None = None,
     path_parameter: Any = None,
     
 ):
@@ -24,7 +25,7 @@ async def validate_invalid_parameter(
 
     
     data[parameter_name] = parameter_value
-    response = await method_map[method](url, json=data)
+    response = await method_map[method](url, json=data, headers=headers)
     
     logging.error(f"Request {method.upper()} {url} with {data}\n expected_error_code: {expected_error_code} - expected_error_type: {expected_error_type} - expected_error_message: {expected_error_message} - ")
     logging.error(f"Response: {response.status_code} - {response.json()}")

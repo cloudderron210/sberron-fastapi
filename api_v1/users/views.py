@@ -9,7 +9,6 @@ from core.models.helper import AsyncSessionDep
 
 
 router = APIRouter(tags=["User"])
-router.include_router(client_router, prefix="/client")
 
 
 @router.get("", response_model=list[UserResponse])

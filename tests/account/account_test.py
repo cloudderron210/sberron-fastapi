@@ -13,41 +13,41 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
 ACCOUNT_URL = '/api/v1/account'
 
 @pytest.mark.asyncio
-async def test_get_accounts_success(test_client: AsyncClient):
-    response = await test_client.get(ACCOUNT_URL)
+async def test_get_accounts_success(auth_headers: dict, test_client: AsyncClient):
+    response = await test_client.get(ACCOUNT_URL, headers=auth_headers)
     assert response.status_code == 200
     assert type(response.json()) == list
     
 @pytest.mark.asyncio
-async def test_get_accounts_by_id_success(existing_account: Account, test_client: AsyncClient):
+async def test_get_accounts_by_id_success(auth_headers: dict, existing_account: Account, test_client: AsyncClient):
     account_id = existing_account.id
-    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}")
+    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}", headers=auth_headers)
     assert response.status_code == 200
     assert response.json()
     
 @pytest.mark.asyncio
-async def test_get_accounts_fail(test_client: AsyncClient):
+async def test_get_accounts_fail(auth_headers: dict, test_client: AsyncClient):
     account_id = 999
-    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}")
+    response = await test_client.get(f"{ACCOUNT_URL}/{account_id}", headers=auth_headers)
     assert response.status_code == 404
     assert response.json()['detail'] == f'User with id {account_id} not found'
 
 
 @pytest.mark.asyncio
 async def test_add_account(
-    existing_currency: Currency, existing_user: User, test_client: AsyncClient
+    auth_headers: dict,existing_currency: Currency, existing_user: User, test_client: AsyncClient
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["userId"] = existing_user.id
     data["currencyId"] = existing_currency.id
-    response = await test_client.post(ACCOUNT_URL, json=data)
+    response = await test_client.post(ACCOUNT_URL, json=data, headers=auth_headers)
     assert response.status_code == 200
     assert response.json()["userId"] == existing_user.id
 
 
 @pytest.mark.asyncio
 async def test_no_such_currency(
-    existing_currency: Currency, existing_user: User, test_client: AsyncClient
+    auth_headers: dict, existing_currency: Currency, existing_user: User, test_client: AsyncClient
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = "811"
@@ -61,7 +61,8 @@ async def test_no_such_currency(
         url=ACCOUNT_URL,
         method='post',
         expected_error_code=400,
-        expected_error_type='currency_not_found'
+        expected_error_type='currency_not_found',
+        headers=auth_headers
     )
 
 
@@ -81,6 +82,7 @@ async def test_invalid_balnum(
     expected_error_type: str,
     error_message: str,
     balNumInput: Any,
+    auth_headers: dict
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = existing_currency.id
@@ -95,7 +97,8 @@ async def test_invalid_balnum(
         url=ACCOUNT_URL,
         expected_error_type=expected_error_type,
         expected_error_message=error_message,
-        expected_error_code=422
+        expected_error_code=422,
+        headers=auth_headers
     )
     
 @pytest.mark.asyncio
@@ -113,7 +116,7 @@ async def test_invalid_is_active(
     expected_error_type: str,
     error_message: str,
     isActiveValue: Any,
-    
+    auth_headers: dict
 ):
     data = TEST_ACCOUNT_DATA.copy()
     data["currencyId"] = existing_currency.id
@@ -128,7 +131,8 @@ async def test_invalid_is_active(
         url='/api/v1/account',
         expected_error_type=expected_error_type,
         expected_error_message=error_message,
-        expected_error_code=422
+        expected_error_code=422, 
+        headers=auth_headers
     )
 
 

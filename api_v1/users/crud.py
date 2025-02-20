@@ -60,7 +60,7 @@ async def get_accounts(user_id: int, session: AsyncSession):
 
 
 async def get_user(session: AsyncSession) -> list[User]:
-    stmt = select(User).order_by(User.id)
+    stmt = select(User).options(selectinload(User.accounts)).order_by(User.id)
     result: Result = await session.execute(stmt)
     users = result.scalars().all()
     return list(users)
@@ -71,7 +71,6 @@ async def get_user_by_id(session: AsyncSession, user_id: int) -> User | None:
         select(User).options(selectinload(User.accounts)).where(User.id == user_id)
     )
 
-
 async def update_user(session: AsyncSession, user: User, user_update: UpdateUser):
 
     await check_if_exists(session, user.telephone, user.doc_requisites, user_id=user.id)
@@ -80,7 +79,6 @@ async def update_user(session: AsyncSession, user: User, user_update: UpdateUser
         setattr(user, name, value)
     await session.commit()
     return user
-
 
 async def patch_user(session: AsyncSession, user: User, user_update: PatchUser):
 

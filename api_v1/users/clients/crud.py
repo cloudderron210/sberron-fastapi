@@ -4,7 +4,7 @@ import logging
 import secrets
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from api_v1.users.clients.schemas import AddClient
 from api_v1.users.crud import add_user
 from core.models import User, Client
@@ -45,9 +45,11 @@ async def register_client(client_data: AddClient, session: AsyncSession) -> Clie
         new_user_client = UserClient(user_id=new_user.id, client_id=new_client.id)
         session.add(new_user_client)
 
-
         await session.commit()
+        await session.refresh(new_client)
 
+        new_client = await(session.scalar(select(Client).options(selectinload(Client.user)).where(Client.id == new_client.id)))
+        
         return new_client
 
     except Exception:
@@ -59,7 +61,7 @@ async def register_client(client_data: AddClient, session: AsyncSession) -> Clie
     
 
 
-async def login_client(client: Client, session: AsyncSession):
+async def login_client(client: Client, session: AsyncSession) -> dict | None:
     stmt = select(UserClient).where(UserClient.client_id == client.id)
     user_client = await session.scalar(stmt)
     if user_client:

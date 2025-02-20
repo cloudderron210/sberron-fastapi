@@ -19,7 +19,7 @@ async def get_accounts(session: AsyncSessionDep, authorised_user: AuthorisedUser
 
 
 @router.get("/{account_id}", response_model=AccountResponse)
-async def get_accounts_by_id(account: AccountById, authorised_user: AuthorisedUser):
+async def get_accounts_by_id(authorised_user: AuthorisedUser, account: AccountById):
     authorised_user = await require_admin(authorised_user)
     return account
 

@@ -1,6 +1,7 @@
 from httpx import AsyncClient
 import pytest
 from core.models import User
+from core.models.client import Client
 from tests.user.fixtures import USER_TEST_DATA
 
 pytest_plugins = ('pytest_asyncio',)
@@ -16,7 +17,7 @@ async def test_create_user_success(test_client: AsyncClient):
     assert response.status_code == 200 
     
 @pytest.mark.asyncio
-async def test_get_users(existing_user: User, test_client: AsyncClient):
+async def test_get_users(existing_client: Client, existing_client2: Client, test_client: AsyncClient):
     response = await test_client.get(
         '/api/v1/user',
     )

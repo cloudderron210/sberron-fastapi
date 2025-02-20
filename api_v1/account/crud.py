@@ -44,7 +44,6 @@ async def add(account_data: AddAccount, session: AsyncSession) -> Account:
         select(User).where(User.id == account_data.userId)
     )
     owner = result.scalar()
-
     if not owner:
         raise CustomValidationError(
             status_code=400,

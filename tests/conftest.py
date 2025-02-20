@@ -7,4 +7,5 @@ from tests.account.fixtures import (
 )
 from tests.funds.fixtures import exs_hundred_rub_passive_to_active
 from tests.test_engine import setup_db, db_session, test_client
-from tests.user.fixtures import existing_user, existing_user2, existing_client, existing_client_login
+from tests.user.fixtures import existing_user, existing_user2, existing_client, existing_client_login, test_jwt, auth_headers, existing_client2
+
