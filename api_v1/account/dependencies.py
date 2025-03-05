@@ -15,6 +15,7 @@ async def get_account_dep(account_id: Annotated[int, Path],
 
 AccountById = Annotated[Account, Depends(get_account_dep)]
         
-        
+
+
         
     

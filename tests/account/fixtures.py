@@ -1,7 +1,9 @@
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
+from api_v1.account.crud import add
 from core.models.account import Account
 from core.models.currency import Currency
+from core.models.user import User
 from tests.test_engine import setup_db, db_session, test_client
 from api_v1.account.schemas import AddAccount, BaseAccount
 
@@ -26,49 +28,48 @@ async def existing_currency(db_session: AsyncSession) -> Currency:
     await db_session.refresh(new_currency)
     return new_currency
 
-async def get_account(num_account:str , db_session: AsyncSession, is_active: bool):
+async def create_account(db_session: AsyncSession, is_active: bool, owner: User) -> Account:
     data = TEST_ACCOUNT_DATA.copy()
-    account_data = BaseAccount(**data).model_dump(by_alias=True)
-    account_data['num_account'] = num_account
-    account_data['is_active'] = is_active
-    account_data.pop('bal_num')
-    new_account = Account(**account_data)
+    data['userId'] = owner.id
+    data['isActive'] = is_active
+    account_data = AddAccount(**data)
+    new_account = await add(account_data, db_session)
+    return new_account
     
 
-    
-    db_session.add(new_account)
-    await db_session.commit()
-    await db_session.refresh(new_account)
+@pytest_asyncio.fixture
+async def existing_account(existing_currency: Currency, existing_user: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=True, owner=existing_user)
     return new_account
 
 
 @pytest_asyncio.fixture
-async def existing_account(db_session: AsyncSession) -> Account:
-    num_account = '12345810444440000002'
-    new_account = await get_account(num_account, db_session, is_active=True)
+async def existing_account_passive(existing_user: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=False, owner=existing_user)
     return new_account
 
 
 @pytest_asyncio.fixture
-async def existing_account_passive(db_session: AsyncSession) -> Account:
-    num_account = '12345810444440000001'
-    new_account = await get_account(num_account, db_session, is_active=False)
-    return new_account
-
-
-@pytest_asyncio.fixture
-async def existing_account_2(db_session: AsyncSession) -> Account:
-    num_account = '12345810444440000003'
-    new_account = await get_account(num_account, db_session, is_active=True)
+async def existing_account_2(existing_user: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=True, owner=existing_user)
     return new_account
 
     
 @pytest_asyncio.fixture
-async def existing_account_passive_2(db_session: AsyncSession) -> Account:
-    num_account = '12345810444440000004'
-    new_account = await get_account(num_account, db_session, is_active=False)
+async def existing_account_passive_2(existing_user: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=False, owner=existing_user)
     return new_account
     
+@pytest_asyncio.fixture
+async def active_account_for_user1(existing_user: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=True, owner=existing_user)
+    return new_account
+
+@pytest_asyncio.fixture
+async def passive_account_for_user2(existing_currency: Currency, existing_user2: User, db_session: AsyncSession) -> Account:
+    new_account = await create_account(db_session, is_active=False, owner=existing_user2)
+    return new_account
+
 
 
 

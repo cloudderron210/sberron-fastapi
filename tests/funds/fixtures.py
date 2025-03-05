@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models.account import Account
 from core.models.money_move_order import MoneyMoveOrder
 
+FUNDS_URL = "/api/v1/funds"
+
 
 MOVE_MONEY_DATA_TEMPLATE = {
     "strAccDb": "12346810744440000002",

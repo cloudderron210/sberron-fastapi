@@ -11,13 +11,14 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .currency import Currency
+    from .user import User
 
-class Account(Base, UserRelationMixin):
+class Account(Base):#, UserRelationMixin):
     __tablename__ = 'accounts'
-    _user_back_populates = 'accounts'
     
     currency_id: Mapped[int] = mapped_column(ForeignKey('currencies.id'))
     num_account: Mapped[str] = mapped_column(String(50))
+    user_id:Mapped[int] = mapped_column(ForeignKey('users.id'))
     date_open: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
     date_closed: Mapped[datetime | None ]
     description: Mapped[str] = mapped_column(String(100))
@@ -26,7 +27,9 @@ class Account(Base, UserRelationMixin):
 
     currency: Mapped['Currency'] = relationship(back_populates='accounts')
     
-    # credit_orders: Mapped['MoneyMoveOrder'] = relationship("MoneyMoveOrder", foreign_keys=[MoneyMoveOrder.id_acc_cr],back_populates='credit_account')
-    # debet_orders: Mapped['MoneyMoveOrder'] = relationship("MoneyMoveOrder", foreign_keys=[MoneyMoveOrder.id_acc_db],back_populates='debet_account')
+    users: Mapped[list['User']] = relationship(secondary='user_account', back_populates='accounts')
+    
+    
+    
     
     

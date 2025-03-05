@@ -5,6 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
+if TYPE_CHECKING:
+    from .user import User
 
 
 class Client(Base):
@@ -18,5 +20,6 @@ class Client(Base):
     time_last_login: Mapped[datetime | None]
     last_login_ip: Mapped[str | None]
     
+    user: Mapped['User'] = relationship(secondary='user_client', back_populates='client')
     
     

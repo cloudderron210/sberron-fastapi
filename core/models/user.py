@@ -7,6 +7,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .account import Account
+    from .client import Client
 
 class User(Base):
     __tablename__ = 'users'
@@ -23,6 +24,9 @@ class User(Base):
     doc_requisites: Mapped[str] 
     doc_issued_by: Mapped[str] 
 
-    accounts: Mapped[list['Account']] = relationship(back_populates='user')
+    
+    client: Mapped['Client'] = relationship(secondary='user_client',back_populates='user')
+    
+    accounts: Mapped[list['Account']] = relationship(secondary='user_account', back_populates='users')
 
-
+    

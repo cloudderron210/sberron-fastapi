@@ -1,6 +1,8 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel, to_snake
 
+# from api_v1.users.schemas import UserResponse
+
 
 class ValidatorMixin:
     
@@ -48,6 +50,7 @@ class AccountResponse(BaseModel):
     currency_id: int 
     description: str  
     is_active: bool
+    # users: list[UserResponse]
 
     model_config = ConfigDict(
         populate_by_name=True,
