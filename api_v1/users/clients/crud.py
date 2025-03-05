@@ -14,6 +14,7 @@ import jwt
 from core.config import settings
 
 logger = logging.getLogger("uvicorn.error")
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
 def get_hash(paswd: str) -> dict:
@@ -24,7 +25,9 @@ def get_hash(paswd: str) -> dict:
     return {"hash": hash, "salt": salt}
 
 async def register_client(client_data: AddClient, session: AsyncSession) -> Client:
-
+    """
+    Registers a new client along with a linked user.
+    """
     try:
         user_data = AddUser(
             **client_data.model_dump(exclude={"login", "password"}, by_alias=True)
@@ -48,7 +51,7 @@ async def register_client(client_data: AddClient, session: AsyncSession) -> Clie
         await session.commit()
         await session.refresh(new_client)
 
-        new_client = await(session.scalar(select(Client).options(selectinload(Client.user)).where(Client.id == new_client.id)))
+        new_client = await(session.scalar(select(Client).options(joinedload(Client.user)).where(Client.id == new_client.id)))
         
         return new_client
 
@@ -87,6 +90,7 @@ async def get_user(id: int, session: AsyncSession):
         .where(User.id == id)
     )
     user = await session.scalar(stmt)
+
     if user:
         return user.accounts
     else:

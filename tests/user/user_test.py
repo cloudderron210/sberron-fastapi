@@ -121,4 +121,3 @@ async def test_invalid_document(test_client: AsyncClient):
     assert error['msg'] == "Input should be 'passport' or 'international passport'"
 
 
-

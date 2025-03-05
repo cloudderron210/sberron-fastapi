@@ -18,5 +18,5 @@ from tests.user.fixtures import (
     auth_headers,
     existing_client2,
     test_jwt_user2,
-    auth_headers_user2
+    auth_headers_user2,
 )

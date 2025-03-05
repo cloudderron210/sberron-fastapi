@@ -24,16 +24,6 @@ async def get_accounts_by_id(authorised_user: AuthorisedUser, account: AccountBy
     return account
 
 
-@router.get("/owner/{account_id}", response_model=User)
-async def get_owner(
-    authorised_user: AuthorisedUser, account_id: int, session: AsyncSessionDep
-):
-    if authorised_user["permissions"] == 0:
-        result = await crud.get_owner_by_id(account_id, session)
-        return result
-    else:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Not allowed")
-
 
 @router.post("", response_model=AccountResponse)
 async def add_account(

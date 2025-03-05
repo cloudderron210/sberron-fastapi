@@ -1,6 +1,7 @@
 
 from datetime import date
 import logging
+import random
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from api_v1.users.clients.crud import login_client, register_client
@@ -100,3 +101,22 @@ async def existing_user2(existing_client2: Client):
     return existing_client2.user
 
 
+@pytest_asyncio.fixture
+async def register_1000_clients(db_session: AsyncSession):
+    data = CLIENT_USER_TEST_DATA.copy()
+    def generate_unique_numbers(count):
+        uniqe_numbers = set()
+        while len(uniqe_numbers) < count:
+            number = random.randint(10**5, 10**6-1)
+            uniqe_numbers.add(number)
+        return list(uniqe_numbers)
+    
+    unique_telephone_numbers = generate_unique_numbers(1000)
+    unique_doc_reqs = generate_unique_numbers(1000)
+    for i in range(len(unique_telephone_numbers)):
+        data['telephone'] = str(unique_telephone_numbers[i])
+        data['docRequisites'] = str(unique_doc_reqs[i])
+        client_data = AddClient(**data)
+        new_client = await register_client(client_data, db_session) 
+    return
+        

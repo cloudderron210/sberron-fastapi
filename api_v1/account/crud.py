@@ -1,11 +1,9 @@
-from fastapi import HTTPException
 from sqlalchemy import Result
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from api_v1.account.schemas import AddAccount, BaseAccount
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
-from core.helpers import logger
 
 from core.helpers import CustomValidationError
 from core.models.account import Account
@@ -18,20 +16,6 @@ async def get_accounts(session: AsyncSession) -> list[Account]:
     result: Result = await session.execute(stmt)
     accounts = result.scalars().all()
     return list(accounts)
-
-
-async def get_owner_by_id(account_id, session: AsyncSession):
-    result = await session.execute(
-        select(Account)
-        .options(selectinload(Account.user))
-        .where(Account.id == account_id)
-    )
-    account = result.scalar()
-    if account:
-        owner = account.user
-        return owner
-    else:
-        raise HTTPException(404, detail="Account not found")
 
 
 async def get_by_id(account_id: int, session: AsyncSession) -> Account | None:
@@ -78,7 +62,7 @@ async def add(account_data: AddAccount, session: AsyncSession) -> Account:
             return f"{1:07}"
 
     def sum_c(bal_num: str, lic: str, val: str):
-        KOEFFICIENT = [ 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1,]
+        KOEFFICIENT = [ 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, ]
         BIK = "567"
         FILIAL = "4444"
         pred = [int(char) for char in (BIK + bal_num + val + "0" + FILIAL + lic)]
@@ -103,13 +87,16 @@ async def add(account_data: AddAccount, session: AsyncSession) -> Account:
     )
     data.pop("bal_num")
 
-    
     new_account = Account(**data)
     session.add(new_account)
     await session.flush()
     await session.refresh(new_account)
-    
-    new_account = await session.scalar(select(Account).options(selectinload(Account.users)).where(Account.id == new_account.id))
+
+    new_account = await session.scalar(
+        select(Account)
+        .options(selectinload(Account.users))
+        .where(Account.id == new_account.id)
+    )
     if new_account:
         new_account.users.append(owner)
         await session.commit()

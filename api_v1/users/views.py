@@ -27,11 +27,9 @@ async def get_accounts_by_user_id(user_id: int, session: AsyncSessionDep):
     result = await crud.get_accounts(user_id, session)
     return result
 
-
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user_by_id(user: UserDepId):
     return user
-
 
 @router.put("/{user_id}")
 async def put_user(user_update: UpdateUser, user: UserDepId, session: AsyncSessionDep):

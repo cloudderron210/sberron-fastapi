@@ -14,7 +14,6 @@ async def check_if_exists(
     docRequisites: str | None = None,
     user_id: int | None = None,
 ):
-
     query = select(User).where(User.id != user_id)
     if telephone:
         query_tel = query.where(User.telephone == telephone)

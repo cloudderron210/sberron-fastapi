@@ -36,8 +36,6 @@ async def check_balance(account: Account, session: AsyncSession) -> dict:
 
 
 async def move_money(user_validated: dict, movement_data: MoveMoneyData, session: AsyncSession):
-    
-    
     result = await session.execute(
         select(Account)
         .options(selectinload(Account.currency))
