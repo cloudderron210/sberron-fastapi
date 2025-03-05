@@ -1,20 +1,27 @@
 services:
+  app:
+    build: .
+    depends_on:
+      - db
+    networks:
+      - my_network
+    environment:
+      db_url: postgresql+asyncpg://derron:password@db:5432/debug4
+      jwt_secret_key: mreQquxQMuyM2ZybDUyrrXklTh1ruOLp
+    # env_file:  # Use .env file for environment variables
+    #   - .env
+    ports:
+      - "8000:8000"
+
   db:
-    image: postgres 
-    restart: always
+    image: postgres
     environment:
       POSTGRES_USER: derron
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: debug2
-    ports:
-      - "15432:15432"
-    command: >
-      postgres -c logging-collector=on
-               -c log-statement=all
-               -c log-destination=stderr
-      
-      
+      POSTGRES_DB: debug4
+    networks:
+      - my_network
 
-
-
-      
+networks:
+  my_network:
+    driver: bridge
