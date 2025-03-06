@@ -42,6 +42,7 @@ class JwtResponse(BaseModel):
 class ClientRegistered(BaseModel):
     login: str
     date_register: datetime
+    salt: str
     model_config = ConfigDict(
         populate_by_name=True,
         alias_generator=to_camel)
