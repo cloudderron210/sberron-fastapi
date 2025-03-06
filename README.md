@@ -1,7 +1,5 @@
 # Sberron bank app
 
-![GitHub License](https://img.shields.io/github/license/yourusername/your-repo)
-![Build Status](https://img.shields.io/github/actions/workflow/status/yourusername/your-repo/ci.yml)
 
 ## Description
 This project is a Python-based web application built with FastAPI. It provides a RESTful API for managing bank operations, including: 
