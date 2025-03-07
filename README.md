@@ -3,7 +3,10 @@
 
 ## Description
 This project is a Python-based web application built with FastAPI. It provides a RESTful API for managing bank operations, including: 
-user registration, managing accounts ans so on
+• User registration using JWT
+• Managing accounts 
+• Transactions
+• Card management
 It is designed to be lightweight, scalable, and easy to deploy.
 
 ## Table of Contents
