@@ -47,6 +47,16 @@ It is designed to be lightweight, scalable, and easy to deploy.
    ```
    
 4. The API will be available at http://localhost:8000.
+   
+---
+
+## Technologies Used
+- **FastAPI**
+- **SQLAlchemy**
+- **Pydantic**
+- **PostgreSQL** 
+- **Docker** 
+
 
 
     
