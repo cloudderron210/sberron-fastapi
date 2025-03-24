@@ -10,6 +10,14 @@ from core.models.account import Account
 from core.models.money_move_order import MoneyMoveOrder as Mmo
 
 
+async def get_orders(user_validated: dict, session: AsyncSession):
+    result = await session.execute(
+        select(Mmo)
+        .join(Account, Account.id == Mmo.id_acc_db)
+    )
+    return result.scalars().all()
+    
+
 async def check_balance(account: Account, session: AsyncSession) -> dict:
     async def get_sum_of_funds(account_id, is_executed: bool):
         result = await session.execute(
