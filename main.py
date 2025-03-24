@@ -4,6 +4,7 @@ from core.helpers import CustomValidationError
 from api_v1 import router as router_v1
 from contextlib import asynccontextmanager
 from core.config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -11,6 +12,7 @@ from core.config import settings
 
     
 app = FastAPI()
+
         
 @app.exception_handler(CustomValidationError)
 async def custom_validation_exeption_handler(request: Request, exc: CustomValidationError):
@@ -29,6 +31,16 @@ async def custom_validation_exeption_handler(request: Request, exc: CustomValida
     )
 
 app.include_router(router_v1, prefix=settings.apiv1_prefix)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
