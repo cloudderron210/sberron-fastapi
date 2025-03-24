@@ -68,7 +68,7 @@ async def login_client(client: Client, session: AsyncSession) -> dict | None:
     stmt = select(UserClient).where(UserClient.client_id == client.id)
     user_client = await session.scalar(stmt)
     if user_client:
-        current_datetime_plus_20 = datetime.now() + timedelta(minutes=20)
+        current_datetime_plus_20 = datetime.now() + timedelta(minutes=200)
         formatted_timestamp = current_datetime_plus_20.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         payload = {
             "idClient": user_client.client_id,

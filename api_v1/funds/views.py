@@ -19,3 +19,8 @@ async def move_money(user_validated:AuthorisedUser, data: MoveMoneyData, session
 @router.get('/balance/{account_id}', response_model=BalanceResponse)
 async def balance(account: AccountById, session: AsyncSessionDep):
     return await crud.check_balance(account, session)
+    
+
+@router.get('/order', response_model=list[MovementResponse])
+async def get_orders(user_validated:AuthorisedUser, session: AsyncSessionDep):
+    return await crud.get_orders(user_validated, session)

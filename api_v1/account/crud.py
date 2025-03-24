@@ -21,6 +21,9 @@ async def get_accounts(session: AsyncSession) -> list[Account]:
 async def get_by_id(account_id: int, session: AsyncSession) -> Account | None:
     return await session.get(Account, account_id)
 
+async def delete_account(account: Account, session: AsyncSession):
+    await session.delete(account)
+    await session.commit()
 
 async def add(account_data: AddAccount, session: AsyncSession) -> Account:
 

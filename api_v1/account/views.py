@@ -17,6 +17,11 @@ async def get_accounts(session: AsyncSessionDep, authorised_user: AuthorisedUser
     result = await crud.get_accounts(session)
     return result
 
+@router.delete("/{account_id}")
+async def delete_account(account: AccountById, session: AsyncSessionDep, authorised_user: AuthorisedUser):
+    authorised_user = await require_admin(authorised_user)
+    await crud.delete_account(account, session)
+    return {"message": "Account deleted"}
 
 @router.get("/{account_id}", response_model=AccountResponse)
 async def get_accounts_by_id(authorised_user: AuthorisedUser, account: AccountById):
